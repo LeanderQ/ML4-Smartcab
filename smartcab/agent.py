@@ -3,6 +3,7 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+from random import randint
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -99,8 +100,12 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = None
+        #action = None
 
+        rndActNum=randint(0,3)
+        action = self.valid_actions[rndActNum]
+            
+        
         ########### 
         ## TO DO ##
         ###########
@@ -163,6 +168,7 @@ def run():
     # Follow the driving agent
     # Flags:
     #   enforce_deadline - set to True to enforce a deadline metric
+    
     env.set_primary_agent(agent)
 
     ##############
@@ -172,14 +178,16 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env)
+    #sim = Simulator(env)
+    sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run()
+    #sim.run()
+    sim.run(n_test=10)
 
 
 if __name__ == '__main__':
