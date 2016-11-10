@@ -40,6 +40,11 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
+		
+		if testing == True:
+			epsilon = 0
+			alpha = 0
+
 
         return None
 
@@ -61,8 +66,13 @@ class LearningAgent(Agent):
         #   If it is not, create a dictionary in the Q-table for the current 'state'
         #   For each action, set the Q-value for the state-action pair to 0
         
-        state = None
+        state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'],)
 
+		if self.learning == True:
+		     checkState = self.Q.get(state)
+			 if checkState is not None:
+				createQ(self, state)
+		
         return state
 
 
@@ -179,7 +189,7 @@ def run():
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
     sim = Simulator(env)
-    $sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
+    #sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
     
     ##############
     # Run the simulator
@@ -187,7 +197,7 @@ def run():
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
     sim.run()
-    $sim.run(n_test=10)
+    #sim.run(n_test=10)
 
 
 if __name__ == '__main__':
