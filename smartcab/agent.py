@@ -40,10 +40,10 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
-		
-		if testing == True:
-			epsilon = 0
-			alpha = 0
+        
+        if testing == True:
+            epsilon = 0
+            alpha = 0
 
 
         return None
@@ -68,11 +68,11 @@ class LearningAgent(Agent):
         
         state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'],)
 
-		if self.learning == True:
-		     checkState = self.Q.get(state)
-			 if checkState is not None:
-				createQ(self, state)
-		
+        if self.learning == True:
+             checkState = self.Q.get(state)
+             if checkState is not None:
+                createQ(self, state)
+        
         return state
 
 
@@ -85,8 +85,10 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
 
-        maxQ = None
-
+        theQs = self.Q[state]
+        
+        maxKey = max(theQs, key=lambda i: theQs[i])
+        maxQ = theQs[maxKey]
         return maxQ 
 
 
@@ -100,6 +102,9 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
 
+        checkState = self.Q.get(state)  
+             if checkState is not None: #should only be called by buildState, but checking again to be safe
+                self.Q[state] = (None:0, 'forward':0, 'left':0, 'right':0) #self.env.valid_actions # a list of all valid actions
         return
 
 
@@ -112,8 +117,7 @@ class LearningAgent(Agent):
         self.next_waypoint = self.planner.next_waypoint()
         #action = None
 
-        rndActNum=randint(0,3)
-        action = self.valid_actions[rndActNum]
+
             
         
         ########### 
@@ -123,6 +127,14 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
  
+        if learning == True:
+            rndActNum=randint(0,3)
+            action = self.valid_actions[rndActNum]
+        else:
+            maxQ=self.get_maxQ(self)
+            for key, val in self.Q.iteritems():
+                if val == maxQ:
+                    action=key
         return action
 
 
@@ -134,9 +146,11 @@ class LearningAgent(Agent):
         ########### 
         ## TO DO ##
         ###########
-        # When learning, implement the value iteration update rule
+        # When learning, implement the value iteration update rule #from https://en.wikipedia.org/wiki/Q-learning
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-
+		if learning == True:
+			oldValue = self.Q[state][action]
+			alpha = self.alpha
         return
 
 
