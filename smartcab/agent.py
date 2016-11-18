@@ -21,7 +21,7 @@ class LearningAgent(Agent):
         self.alpha = alpha       # Learning factor
 
         self.currentTrial=1
-		
+        
         ###########
         ## TO DO ##
         ###########
@@ -32,7 +32,7 @@ class LearningAgent(Agent):
         """ The reset function is called at the beginning of each trial.
             'testing' is set to True if testing trials are being used
             once training trials have completed. """
-
+        
         # Select the destination as the new location to route to
         self.planner.route_to(destination)
         
@@ -43,13 +43,18 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         
-        #self.epsilon = self.epsilon - 0.05
+        #self.epsilon = self.epsilon - 0.02
         
         #print("Current Trial:", self.currentTrial ** 2)
         #self.epsilon = 1.0/(self.currentTrial ** 2)
-        self.espilon = 0.90 ** self.currentTrial
+        #print("Current Trial:", self.currentTrial, "Epsilon:",  0.80 ** self.currentTrial)
+        #self.epsilon = 0.80 ** self.currentTrial
+        #self.epsilon = math.exp(-self.alpha*self.currentTrial)
+        #self.epsilon = math.cos(self.alpha*self.currentTrial)
+        #self.epsilon = 0.5*math.log(self.currentTrial)
+        self.epsilon = math.sin(math.pi*(40+self.currentTrial)/80)
         self.currentTrial = self.currentTrial + 1
-		
+        
         if testing == True:
             self.epsilon = 0
             self.alpha = 0
@@ -137,15 +142,19 @@ class LearningAgent(Agent):
         # When learning, choose a random action with 'epsilon' probability
         #   Otherwise, choose an action with the highest Q-value for the current state
  
-        if self.learning == True:
+        if self.learning == False:
             rndActNum=randint(0,3)
             action = self.valid_actions[rndActNum]
         else:
-            maxQ=self.get_maxQ(state)
-            for key, val in self.Q.iteritems():
-                for actKey, actVal in val.iteritems():
-                    if actVal == maxQ:
-                        action=actKey
+            if random.random()<self.epsilon:
+                rndActNum=randint(0,3)
+                action = self.valid_actions[rndActNum]
+            else:
+                maxQ=self.get_maxQ(state)
+                for key, val in self.Q.iteritems():
+                    for actKey, actVal in val.iteritems():
+                        if actVal == maxQ:
+                            action=actKey
         return action
 
 
@@ -202,8 +211,11 @@ def run():
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)  #no learning
     #agent = env.create_agent(LearningAgent,learning=True) #initial
-    agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.25) #optimized
+    agent = env.create_agent(LearningAgent,learning=True, epsilon = 0.75, alpha = 0.75) #optimized
     
+    #improving alpha .75 got an A+ in reliability
+    #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
+	#eps = 2, alpha = 0.7 got good results but crashed code
     ##############
     # Follow the driving agent
     # Flags:
@@ -229,7 +241,8 @@ def run():
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
     #sim.run()
-    sim.run(n_test=10)
+    #sim.run(n_test=10)
+    sim.run(n_test=10,tolerance=0.01)
 
 
 if __name__ == '__main__':

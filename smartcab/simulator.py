@@ -150,7 +150,6 @@ class Simulator(object):
                 print "| Testing trial {}".format(trial)
             else:
                 print "| Training trial {}".format(trial)
-
             print "\-------------------------"
             print 
 
