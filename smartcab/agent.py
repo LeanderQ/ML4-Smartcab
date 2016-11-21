@@ -52,7 +52,8 @@ class LearningAgent(Agent):
         #self.epsilon = math.exp(-self.alpha*self.currentTrial)
         #self.epsilon = math.cos(self.alpha*self.currentTrial)
         #self.epsilon = 0.5*math.log(self.currentTrial)
-        self.epsilon = math.sin(math.pi*(40+self.currentTrial)/80)
+        self.epsilon = math.sin(math.pi*(40+self.currentTrial)/160)
+        self.alpha = 0.5-math.sin(math.pi*(40+self.currentTrial)/160)/4
         self.currentTrial = self.currentTrial + 1
         
         if testing == True:
@@ -211,7 +212,7 @@ def run():
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)  #no learning
     #agent = env.create_agent(LearningAgent,learning=True) #initial
-    agent = env.create_agent(LearningAgent,learning=True, epsilon = 0.75, alpha = 0.75) #optimized
+    agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.5) #optimized
     
     #improving alpha .75 got an A+ in reliability
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
@@ -242,7 +243,7 @@ def run():
     #   n_test     - discrete number of testing trials to perform, default is 0
     #sim.run()
     #sim.run(n_test=10)
-    sim.run(n_test=10,tolerance=0.01)
+    sim.run(n_test=50,tolerance=0.01)
 
 
 if __name__ == '__main__':
