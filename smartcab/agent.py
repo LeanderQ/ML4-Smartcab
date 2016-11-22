@@ -43,8 +43,8 @@ class LearningAgent(Agent):
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         
-        #self.epsilon = self.epsilon - 0.02
-        
+        #self.epsilon = self.epsilon - 0.05 #default learning
+        self.epsilon = self.epsilon - 0.02
         #print("Current Trial:", self.currentTrial ** 2)
         #self.epsilon = 1.0/(self.currentTrial ** 2)
         #print("Current Trial:", self.currentTrial, "Epsilon:",  0.80 ** self.currentTrial)
@@ -52,8 +52,8 @@ class LearningAgent(Agent):
         #self.epsilon = math.exp(-self.alpha*self.currentTrial)
         #self.epsilon = math.cos(self.alpha*self.currentTrial)
         #self.epsilon = 0.5*math.log(self.currentTrial)
-        self.epsilon = math.sin(math.pi*(40+self.currentTrial)/160)
-        self.alpha = 0.5-math.sin(math.pi*(40+self.currentTrial)/160)/4
+        #self.epsilon = math.sin(math.pi*(40+self.currentTrial)/160)
+        #self.alpha = 0.5-math.sin(math.pi*(40+self.currentTrial)/160)/4
         self.currentTrial = self.currentTrial + 1
         
         if testing == True:
@@ -81,8 +81,9 @@ class LearningAgent(Agent):
         #   If it is not, create a dictionary in the Q-table for the current 'state'
         #   For each action, set the Q-value for the state-action pair to 0
         
-        state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'],)
+        state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'])
 
+        
         if self.learning == True:
              checkState = self.Q.get(state)
              if checkState is None:
@@ -173,6 +174,8 @@ class LearningAgent(Agent):
             oldValue = self.Q[state][action]
             alpha = self.alpha
             newValue = oldValue + alpha*(reward-oldValue)
+			
+			#newValue = oldValue + alpha*(reward+gamma*self.get_maxQ(state)-oldValue) could be interesting to check out, but I would need maxQ of next state, somehow.
             stateDict=self.Q[state]
             stateDict[action]=newValue
         return
@@ -212,10 +215,11 @@ def run():
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)  #no learning
     #agent = env.create_agent(LearningAgent,learning=True) #initial
-    agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.5) #optimized
+    #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized
     
     #improving alpha .75 got an A+ in reliability
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
+    agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7)
 	#eps = 2, alpha = 0.7 got good results but crashed code
     ##############
     # Follow the driving agent
