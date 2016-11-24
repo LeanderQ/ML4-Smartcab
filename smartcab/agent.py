@@ -44,7 +44,7 @@ class LearningAgent(Agent):
         # If 'testing' is True, set epsilon and alpha to 0
         
         #self.epsilon = self.epsilon - 0.05 #default learning
-        self.epsilon = self.epsilon - 0.02
+        
         #print("Current Trial:", self.currentTrial ** 2)
         #self.epsilon = 1.0/(self.currentTrial ** 2)
         #print("Current Trial:", self.currentTrial, "Epsilon:",  0.80 ** self.currentTrial)
@@ -52,8 +52,15 @@ class LearningAgent(Agent):
         #self.epsilon = math.exp(-self.alpha*self.currentTrial)
         #self.epsilon = math.cos(self.alpha*self.currentTrial)
         #self.epsilon = 0.5*math.log(self.currentTrial)
-        #self.epsilon = math.sin(math.pi*(40+self.currentTrial)/160)
-        #self.alpha = 0.5-math.sin(math.pi*(40+self.currentTrial)/160)/4
+        
+        #gives B/A in 100 trials
+        #self.epsilon = self.epsilon - 0.02
+        self.epsilon = self.epsilon - 0.002
+                
+        #gives A/B in 160 trials
+        #self.epsilon = math.sin(math.pi/2 + (math.pi/2)*self.currentTrial/160)
+        #self.alpha = 0.5 + 0.5*(1-self.epsilon)
+        
         self.currentTrial = self.currentTrial + 1
         
         if testing == True:
@@ -82,6 +89,7 @@ class LearningAgent(Agent):
         #   For each action, set the Q-value for the state-action pair to 0
         
         state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'])
+
 
         
         if self.learning == True:
@@ -174,8 +182,13 @@ class LearningAgent(Agent):
             oldValue = self.Q[state][action]
             alpha = self.alpha
             newValue = oldValue + alpha*(reward-oldValue)
-			
-			#newValue = oldValue + alpha*(reward+gamma*self.get_maxQ(state)-oldValue) could be interesting to check out, but I would need maxQ of next state, somehow.
+            
+            #nextState = self.build_state()
+            #newValue = oldValue + alpha*(reward+self.get_maxQ(nextState)-oldValue)
+            
+            #newValue = oldValue + alpha*(reward+gamma*self.get_maxQ(state)-oldValue) could be interesting to check out, but I would need maxQ of next state, somehow.
+            
+            
             stateDict=self.Q[state]
             stateDict[action]=newValue
         return
@@ -220,7 +233,7 @@ def run():
     #improving alpha .75 got an A+ in reliability
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
     agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7)
-	#eps = 2, alpha = 0.7 got good results but crashed code
+    #eps = 2, alpha = 0.7 got good results but crashed code
     ##############
     # Follow the driving agent
     # Flags:
@@ -238,7 +251,7 @@ def run():
     #   optimized    - set to True to change the default log file name
     #sim = Simulator(env)
     #sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False)
-    sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False, optimized=True)
+    sim = Simulator(env, update_delay=0.001, log_metrics=True, display=False, optimized=True)
     
     ##############
     # Run the simulator
