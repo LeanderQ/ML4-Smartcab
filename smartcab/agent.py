@@ -53,11 +53,11 @@ class LearningAgent(Agent):
         #self.epsilon = math.cos(self.alpha*self.currentTrial)
         #self.epsilon = 0.5*math.log(self.currentTrial)
         
-        #gives B/A in 100 trials
-        #self.epsilon = self.epsilon - 0.02
-        self.epsilon = self.epsilon - 0.002
+        #gives A/A in 100 trials
+        self.epsilon = self.epsilon - 0.02
+		#self.epsilon = self.epsilon - 0.02
                 
-        #gives A/B in 160 trials
+        #gives F/B in 160 trials
         #self.epsilon = math.sin(math.pi/2 + (math.pi/2)*self.currentTrial/160)
         #self.alpha = 0.5 + 0.5*(1-self.epsilon)
         
@@ -88,8 +88,8 @@ class LearningAgent(Agent):
         #   If it is not, create a dictionary in the Q-table for the current 'state'
         #   For each action, set the Q-value for the state-action pair to 0
         
-        state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'])
-
+        #state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'],inputs['right'])
+        state = (waypoint, inputs['light'],inputs['oncoming'],inputs['left'])
 
         
         if self.learning == True:
@@ -186,7 +186,7 @@ class LearningAgent(Agent):
             #nextState = self.build_state()
             #newValue = oldValue + alpha*(reward+self.get_maxQ(nextState)-oldValue)
             
-            #newValue = oldValue + alpha*(reward+gamma*self.get_maxQ(state)-oldValue) could be interesting to check out, but I would need maxQ of next state, somehow.
+            #newValue = oldValue + alpha*(reward+gamma*self.get_maxQ(state)-oldValue) #could be interesting to check out, but I would need maxQ of next state, somehow.
             
             
             stateDict=self.Q[state]
@@ -228,11 +228,13 @@ def run():
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)  #no learning
     #agent = env.create_agent(LearningAgent,learning=True) #initial
-    #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized
-    
+    agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7) #optimized
+	#agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.65) #give D, A+
+
+		
     #improving alpha .75 got an A+ in reliability
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
-    agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7)
+    #agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7)
     #eps = 2, alpha = 0.7 got good results but crashed code
     ##############
     # Follow the driving agent
@@ -260,7 +262,7 @@ def run():
     #   n_test     - discrete number of testing trials to perform, default is 0
     #sim.run()
     #sim.run(n_test=10)
-    sim.run(n_test=50,tolerance=0.01)
+    sim.run(n_test=100,tolerance=0.01)
 
 
 if __name__ == '__main__':
