@@ -54,11 +54,11 @@ class LearningAgent(Agent):
         #self.epsilon = 0.5*math.log(self.currentTrial)
         
         #gives A/A in 100 trials
-        self.epsilon = self.epsilon - 0.02
-		#self.epsilon = self.epsilon - 0.02
+        #self.epsilon = self.epsilon - 0.02
+        #self.epsilon = self.epsilon - 0.02
                 
         #gives F/B in 160 trials
-        #self.epsilon = math.sin(math.pi/2 + (math.pi/2)*self.currentTrial/160)
+        self.epsilon = math.sin(math.pi/2 + (math.pi/2)*self.currentTrial/160)
         #self.alpha = 0.5 + 0.5*(1-self.epsilon)
         
         self.currentTrial = self.currentTrial + 1
@@ -161,10 +161,14 @@ class LearningAgent(Agent):
                 action = self.valid_actions[rndActNum]
             else:
                 maxQ=self.get_maxQ(state)
-                for key, val in self.Q.iteritems():
-                    for actKey, actVal in val.iteritems():
-                        if actVal == maxQ:
-                            action=actKey
+                maxQActions =  [];
+                actions = self.Q[state]
+                for actKey, actVal in actions.iteritems():
+                    if actVal == maxQ:
+                        maxQActions.append(actKey)
+                rndActNum = randint(0,len(maxQActions)-1)
+                action = maxQActions[rndActNum]
+                #print("Tie",maxQActions, rndActNum, action)				
         return action
 
 
@@ -228,10 +232,10 @@ def run():
     #    * alpha   - continuous value for the learning rate, default is 0.5
     #agent = env.create_agent(LearningAgent)  #no learning
     #agent = env.create_agent(LearningAgent,learning=True) #initial
-    agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7) #optimized
-	#agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.65) #give D, A+
+    agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized
+    #agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.65) #give D, A+
 
-		
+        
     #improving alpha .75 got an A+ in reliability
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 1, alpha = 0.7) #optimized gives D, B
     #agent = env.create_agent(LearningAgent,learning=True, epsilon = 2, alpha = 0.7)
